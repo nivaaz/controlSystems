@@ -68,3 +68,13 @@ pole(t_fun)
 zero(t_fun)
 
 %% LAB 3 QUESTION 1
+mag_1 = 0.2 %input for the simulink!
+t_len_1 = 0.5
+
+new_ss = Matrix(mag_1*t_fun) %multipling by new mag voltage
+%% 3
+t = ShoulderData.time; theta1 = ShoulderData.signals(1).values(:,1); 
+theta2 = ShoulderData.signals(1).values(:,2); 
+theta1_dot = ShoulderData.signals(2).values(:,1); 
+theta2_dot = ShoulderData.signals(2).values(:,2);
+Im = InputCurrent(:,2); 

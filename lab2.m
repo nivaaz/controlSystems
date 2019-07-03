@@ -31,9 +31,7 @@ eqn1 = Jeq*s^2;
 Vm = (Rm+Lm*s)/(Kb*omega_m);
 Im = Vm/(Rm+Lm*s+Kb*omega_m);
 %% question 2
-
 syms Tm
-
 y = [Tm 0];
 
 % -Tm = @(s) theta(Jeq*s^2)
@@ -76,9 +74,8 @@ step(3*omgega_vm_s, 0.9)
 f = 50;
 lowp = tf(f, [1 f])
 
-%% question 3 
-
-x_data = Speed(:,2);
+%% question 2 remove the ramp up
+x_data = Speed.signals.speed(:,2);
 x_data = x_data(1:len_speed);
 t = Speed(:,1);
 t = t(1:length(x_data));
@@ -90,4 +87,16 @@ t = t(1:length(x_data));
  xlabel("Time (sec)"); ylabel("Disc Speed (rpm)"); title("Truncated Speed Data");
  grid on;
 
-%%
+%% question 3 
+kdc = 1;
+tau = 0.016; %check!
+
+%% questionn 4
+s = tf('s');
+new_tf = kdc/(s*tau+1)
+ylim([0 80])
+
+%%question 6
+Yact = x_data;
+[Ysim, t] = step(new_tf, 10000); %%needs to be the simulated vector!!
+fit_ = (1-norm(Yact-Ysim, 2)/norm(Yact-mean(Yact),2))*100

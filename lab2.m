@@ -1,6 +1,16 @@
-%% Control systems prelab - 2
-clear
-clc
+
+speedy = Speed(:, 2)
+speedy_trunc = speedy(2000:9000)
+plot(1:length(speedy_trunc), speedy_trunc-21)
+
+
+%%
+speedy = Speed(:, 2)
+speedy_trunc = speedy(2000:9000)
+plot(speedy_trunc)
+
+%%%% Control systems prelab - 2
+
 % DC motor parameters
 
 Rm = 8.4; %Ohm
@@ -37,9 +47,6 @@ y = [Tm 0];
 % -Tm = @(s) theta(Jeq*s^2)
 % Vm  = (Rm+Lm*s)/(Kb*omega_m);
 
-%% question 3
-% thigns cancel and can be approximated.
-
 %% question 4
 s = tf('s');
 omega_vm = (Km/Rm)/(Jeq*s+(Km*Kb/Rm))
@@ -65,38 +72,93 @@ omega_zero = zero(omega_vm_s)
 %% question 6
 figure;
 hold on;
+plot(y1, t)
+plot(y2, t)
 % these arent working?????
-step(3*theta_vm_s, 0.9)
-step(3*omgega_vm_s, 0.9)
+[y1 t] = step(3*theta_vm_s, 0.9)
+[y2 t] = step(3*omgega_vm_s, 0.9)
 
 %% Lab 2
-
-f = 50;
+f = 16;
 lowp = tf(f, [1 f])
 
 %% question 2 remove the ramp up
-x_data = Speed.signals.speed(:,2);
-x_data = x_data(1:len_speed);
+x_data = Speed(:, 3);
+len_speed= length(x_data)
+x_data = x_data(2000:len_speed);
 t = Speed(:,1);
 t = t(1:length(x_data));
-
- x_data_2 = x_data(1000:10000);
+plot(t, x_data, 'r')
+ylim([0 80])
+ xlabel("Time (sec)"); ylabel("Disc Speed (rpm)"); title("Speed Data");
+ grid on;
+%% question 3
+ x_data_2 = x_data(1:8001);
  t_2 = t(1:length(x_data_2))
- plot(t_2, x_data_2, 'r');
-
+ plot(t_2, x_data_2-21.5, 'r');
+ylim([0 60])
  xlabel("Time (sec)"); ylabel("Disc Speed (rpm)"); title("Truncated Speed Data");
  grid on;
 
-%% question 3 
-kdc = 1;
-tau = 0.016; %check!
+%% voltage plot data
+v_data = Voltage(:, 2);
+len_v= length(v_data)
 
+v_data = v_data(1000:len_v);
+
+t = Speed(:,1);
+t = t(1:length(v_data));
+
+ x_data_2 = v_data(1000:9001);
+ t_2 = t(1:length(x_data_2))
+ plot(t_2, x_data_2-1, 'g');
+ylim([0 3.5])
+xlim([0 10])
+ xlabel("Time (sec)"); ylabel("Disc Speed (rpm)"); title("Truncated Input Voltage Signa for modelling");
+ grid on;
+%% question 4 
+kdc = 46.9/2
+tau = 132*10^-3; %check!
+
+%% questiomn 5 
+kdc = 46.9/2;
+tau = 132*10^-3; %check!
+meas_tf = tf(kdc, [1 tau])
+theta_vm_s = tf(Km, [Jeq*Lm Jeq*Rm Km*Kb 0])
+omega_vm_s = tf(Km, [Jeq*Lm Jeq*Rm Km*Kb])
+
+[y1, t1] = step(2*meas_tf, 0.9)
+[y2, t2] = step(2*theta_vm_s)
+[y3, t3] = step(2*omega_vm_s)
+
+plot(t1, y1,t2,y2,t3, y3)
 %% questionn 4
 s = tf('s');
-new_tf = kdc/(s*tau+1)
+new_tf = 2*kdc/(s*tau+1)
+[x1 t1] = step(new_tf, 0.9)
 ylim([0 80])
 
-%%question 6
+[y1 t11] = step(3*theta_vm_s, 0.9)
+[y2 t2] = step(3*omega_vm_s, 0.9)
+plot(y1, t, y2, t,x1, t1)
+
+%% q uestion 6
+x_data = Speed(:, 3);
+len_speed= length(x_data)
+x_data = x_data(1000:len_speed);
 Yact = x_data;
-[Ysim, t] = step(new_tf, 10000); %%needs to be the simulated vector!!
-fit_ = (1-norm(Yact-Ysim, 2)/norm(Yact-mean(Yact),2))*100
+
+y_data = Speed(:, 4);
+len_speed= length(y_data)
+y_data = y_data(1000:len_speed);
+Yact1 = y_data;
+
+z_data = Speed(:, 5);
+len_speed= length(z_data)
+z_data = z_data(1000:len_speed);
+Ysim = z_data;
+
+clc
+fit1 = (1-norm(Yact1-Ysim, 2)/norm(Yact1-mean(Yact1),2))*100
+fit2 = (1-norm(Yact-Ysim, 2)/norm(Yact-mean(Yact),2))*100
+

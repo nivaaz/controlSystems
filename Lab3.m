@@ -78,3 +78,12 @@ theta2 = ShoulderData.signals(1).values(:,2);
 theta1_dot = ShoulderData.signals(2).values(:,1); 
 theta2_dot = ShoulderData.signals(2).values(:,2);
 Im = InputCurrent(:,2); 
+
+%% 
+A_3 = [0 1 0;0 0 1; -0.1003 -47.2 -2.737];
+B_3 = [0; 0; 93.54];
+C_3 = 3;
+
+A_4 = [0 0 0 0; 0 1 0 0; 0 0 1 0; -9.503 -3854 -265.4 -84.15]
+B_4 = [0; 0 ;0; 755]
+C_4 = 4;

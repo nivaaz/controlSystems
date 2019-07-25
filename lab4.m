@@ -1,4 +1,44 @@
-    
+%% NIVAAZS LAB 
+%% lab 4
+% prelab 1 
+s = tf('s')
+
+% parameters 
+Kp = 1;
+Ki = 1;
+Kdc = 1;
+tau = 1;
+Tp = 1;
+Ts = 1;
+os =1;
+
+%transfer functions 
+Gc = Kp+Ki/s
+
+G = Kdc/(tau*s+1)
+
+%% 
+
+zeta = sqrt(log(os)^2/(pi^2+log(os)^2))
+
+wn = pi/(Tp*sqrt(1-zeta^2))
+
+wn_1 = 4/(Ts*zeta)
+
+Kp = (2*zeta*wn*tau -1)/kdc 
+
+Ki = tau*wn^2/(Kdc)
+
+a = ki/kp
+
+K = Kdc*Kp/tau
+
+zeta = (Kp*Kdc+1)/(2*sqrt(Ki*Kdc*tau))
+
+wn = sqrt(Ki*Kdc*tau)
+
+
+%% OTHER LAB 
 %% Question 1
 s = tf('s');
 

@@ -62,32 +62,6 @@ D = 0;
 I = eye(4)%%check this.
 [NUM, DEN] = ss2tf(A, B, C, D)
 t_fun = tf(NUM, DEN)
-%% PRELAB QUESTION 5
-% dcgain(t_fun)
-pole(t_fun)
-% zero(t_fun)
-
-%% LAB 3 QUESTION 1
-mag_1 = 0.2 %input for the simulink!
-t_len_1 = 0.5
-
-new_ss = Matrix(mag_1*t_fun) %multipling by new mag voltage
-%% 3
-t = ShoulderData.time; theta1 = ShoulderData.signals(1).values(:,1); 
-theta2 = ShoulderData.signals(1).values(:,2); 
-theta1_dot = ShoulderData.signals(2).values(:,1); 
-theta2_dot = ShoulderData.signals(2).values(:,2);
-Im = InputCurrent(:,2); 
-
-%% 
-A_3 = [0 1 0;0 0 1; -0.1003 -47.2 -2.737];
-B_3 = [0; 0; 93.54];
-C_3 = 3;
-
-A_4 = [0 0 0 0; 0 1 0 0; 0 0 1 0; -9.503 -3854 -265.4 -84.15]
-B_4 = [0; 0 ;0; 755]
-C_4 = 4;
-
 %% LAB 6 prelab q1
 Cm = [B A*B A*A*B A*A*A*B];
 Om = [C; C*A; C*A*A; C*A*A*A];
@@ -107,48 +81,40 @@ end
 %% PRELAB question 2
 close all;
 s = tf('s')
+os = 0.01
+ts = 1.5
+
 G3rd = tf(79.78,[1  2.348  40.85 0])
-impulse(t_fun, G3rd)
-legend on;
+zeta = -log(os)/(sqrt(pi^2+log(os)^2))
+wn = 4/(ts*zeta)
+
+% question 3
+x = s^2 + 2*zeta*wn*s + wn^2 %ideal char eqn 
+
+% impulse(t_fun, G3rd)
+% legend on;
 % poles of G3rd and 0
 roots([1 2.348 40.85])
+[A3rd, B3rd, C3rd, D3rd] = tf2ss(79.78,[1  2.348  40.85 0])
 
-a = [0 1 0; 0 0 1; -40.85 -2.348 1];
-b = [0; 0; 79.78];
-c = [0 1 0];
-%% question 3
-os = 0.01
-zeta = -log(os)/(sqrt(pi^2+log(os)^2))
-ts = 1.5
-wn = 4/(ts*zeta)
 %poles ideal
-p1 = -zeta*wn + wn*sqrt(1-zeta^2)
-p2 = -zeta*wn - wn*sqrt(1-zeta^2)
+p1 = -zeta*wn + wn*sqrt(1-zeta^2)*j
+p2 = -zeta*wn - wn*sqrt(1-zeta^2)*j
+p3 = 50*real(p2)
 
-x = s^2 + 2*zeta*wn*s + wn^2 %ideal char eqn 
-syms k1
-syms k2
-syms k3
-syms s
+a = [0 1 0; 0 0 1; 0 -40.85 -2.348];
+b = [0; 0; 79.78];
+c = [1 0 0];
+d = 0
+K = acker(a,b, [p1, p2, p3])
+L =transpose(acker(A3rd',C3rd',[-20 -20 -20]))
+
+dcgain(ss(a-b*K,b,c,d))
 
 %G3 = 79.78/(s*(s*2 + 2.348*s + 40.85))
 
-K = [k1 k2 k3]
-s*eye(3)-(a-b*K)
-d = det(ans)
-solve(x == d, s)
+% 5
+N = 1
+[n, d] = ss2tf(A3rd, B3rd, C3rd, D3rd)
 
-coeffs(d, s) %coeff of s in the det 
-
-%% 4
-% L =transpose(acker(A3rd',C3rd',[-20 -20 -20]))
-zeta 
-wn
-x %char eqn 
-syms l1
-syms l2
-L = [l1 l2]
-% ex = (A-L*C)ex estimator error dynamics
-dd = det(s*eye(3)-(A-L*C))
-solve(dd == x, )
-
+tf3rd = tf(n, d)

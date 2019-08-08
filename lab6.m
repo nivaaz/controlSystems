@@ -1,6 +1,3 @@
-%prelab can be found here :
-%% https://docs.google.com/document/d/1AQCQ6-0OmNEQCG-qB2rGza9IhbFQsee9ZJia40eRPCo/edit?usp=sharing
-
 %% lab 3
 %% ##### 2DSFJ ROBOT SPECIFICATIONS #####
 clc
@@ -110,7 +107,7 @@ end
 %% PRELAB question 2
 close all;
 s = tf('s')
-G3rd = tf(79.78,[s*2  2.348*s  40.85 0])
+G3rd = tf(79.78,[1  2.348  40.85 0])
 impulse(t_fun, G3rd)
 legend on;
 % poles of G3rd and 0
@@ -128,14 +125,30 @@ wn = 4/(ts*zeta)
 p1 = -zeta*wn + wn*sqrt(1-zeta^2)
 p2 = -zeta*wn - wn*sqrt(1-zeta^2)
 
-x = s^2 + 2*zeta*wn*s + wn^2 %ideal 
-sym k1
-sym k2
-sym k3
+x = s^2 + 2*zeta*wn*s + wn^2 %ideal char eqn 
+syms k1
+syms k2
+syms k3
+syms s
+
+%G3 = 79.78/(s*(s*2 + 2.348*s + 40.85))
 
 K = [k1 k2 k3]
-s*eye(3) - (a-b*K)
+s*eye(3)-(a-b*K)
+d = det(ans)
+solve(x == d, s)
 
+coeffs(d, s) %coeff of s in the det 
 
 %% 4
-L =transpose(acker(A3rd',C3rd',[-20 -20 -20]))
+% L =transpose(acker(A3rd',C3rd',[-20 -20 -20]))
+zeta 
+wn
+x %char eqn 
+syms l1
+syms l2
+L = [l1 l2]
+% ex = (A-L*C)ex estimator error dynamics
+dd = det(s*eye(3)-(A-L*C))
+solve(dd == x, )
+
